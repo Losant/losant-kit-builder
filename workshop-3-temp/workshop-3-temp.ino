@@ -1,23 +1,23 @@
 /**
  * Workshop example for periodically sending temperature data.
  *
- * Visit http://www.getstructure.io/kit for full instructions.
+ * Visit https://www.losant.com/kit for full instructions.
  *
- * Copyright (c) 2016 Structure. All rights reserved.
- * http://www.getstructure.io
+ * Copyright (c) 2016 Losant IoT. All rights reserved.
+ * https://www.losant.com
  */
 
 #include <ESP8266WiFi.h>
-#include <Structure.h>
+#include <Losant.h>
 
 // WiFi credentials.
 const char* WIFI_SSID = "my-wifi-ssid";
 const char* WIFI_PASS = "my-wifi-pass";
 
-// Structure credentials.
-const char* DEVICE_ID = "my-device-id";
-const char* ACCESS_KEY = "my-access-key";
-const char* ACCESS_SECRET = "my-access-secret";
+// Losant credentials.
+const char* LOSANT_DEVICE_ID = "my-device-id";
+const char* LOSANT_ACCESS_KEY = "my-access-key";
+const char* LOSANT_ACCESS_SECRET = "my-access-secret";
 
 const int BUTTON_PIN = 14;
 const int LED_PIN = 12;
@@ -26,7 +26,7 @@ bool ledState = false;
 
 WiFiClientSecure wifiClient;
 
-StructureDevice device(DEVICE_ID);
+LosantDevice device(LOSANT_DEVICE_ID);
 
 void toggle() {
   Serial.println("Toggling LED.");
@@ -34,7 +34,7 @@ void toggle() {
   digitalWrite(LED_PIN, ledState ? HIGH : LOW);
 }
 
-void handleCommand(StructureCommand *command) {
+void handleCommand(LosantCommand *command) {
   Serial.print("Command received: ");
   Serial.println(command->name);
 
@@ -64,9 +64,9 @@ void connect() {
   Serial.println(WiFi.localIP());
 
   Serial.println();
-  Serial.print("Connecting to Structure...");
+  Serial.print("Connecting to Losant...");
 
-  device.connectSecure(wifiClient, ACCESS_KEY, ACCESS_SECRET);
+  device.connectSecure(wifiClient, LOSANT_ACCESS_KEY, LOSANT_ACCESS_SECRET);
 
   while(!device.connected()) {
     delay(500);
@@ -79,15 +79,15 @@ void connect() {
 
 void setup() {
   Serial.begin(115200);
-  
+
   // Giving it a little time because the serial monitor doesn't
   // immediately attach. Want the workshop that's running to
   // appear on each upload.
   delay(2000);
-  
+
   Serial.println();
   Serial.println("Running Workshop 3 Firmware.");
-  
+
   pinMode(BUTTON_PIN, INPUT);
   pinMode(LED_PIN, OUTPUT);
   device.onCommand(&handleCommand);

@@ -1,33 +1,33 @@
 /**
  * Workshop example for a remote control LED.
- * 
- * Visit http://www.getstructure.io/kit for full instructions.
  *
- * Copyright (c) 2016 Structure. All rights reserved.
- * http://www.getstructure.io
+ * Visit https://www.losant.com/kit for full instructions.
+ *
+ * Copyright (c) 2016 Losant IoT. All rights reserved.
+ * https://www.losant.com
  */
 
 #include <ESP8266WiFi.h>
-#include <Structure.h>
+#include <Losant.h>
 
 // WiFi credentials.
 const char* WIFI_SSID = "my-wifi-ssid";
 const char* WIFI_PASS = "my-wifi-pass";
 
-// Structure credentials.
-const char* DEVICE_ID = "my-device-id";
-const char* ACCESS_KEY = "my-access-key";
-const char* ACCESS_SECRET = "my-access-secret";
+// Losant credentials.
+const char* LOSANT_DEVICE_ID = "my-device-id";
+const char* LOSANT_ACCESS_KEY = "my-access-key";
+const char* LOSANT_ACCESS_SECRET = "my-access-secret";
 
 const int BUTTON_PIN = 14;
 const int LED_PIN = 12;
 
 bool ledState = false;
 
-// For an unsecure connection to Structure.
+// For an unsecure connection to Losant.
 WiFiClientSecure wifiClient;
 
-StructureDevice device(DEVICE_ID);
+LosantDevice device(LOSANT_DEVICE_ID);
 
 void toggle() {
   Serial.println("Toggling LED.");
@@ -35,8 +35,8 @@ void toggle() {
   digitalWrite(LED_PIN, ledState ? HIGH : LOW);
 }
 
-// Called whenever the device receives a command from the Structure platform.
-void handleCommand(StructureCommand *command) {
+// Called whenever the device receives a command from the Losant platform.
+void handleCommand(LosantCommand *command) {
   Serial.print("Command received: ");
   Serial.println(command->name);
 
@@ -65,11 +65,11 @@ void connect() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  // Connect to Structure.
+  // Connect to Losant.
   Serial.println();
-  Serial.print("Connecting to Structure...");
+  Serial.print("Connecting to Losant...");
 
-  device.connectSecure(wifiClient, ACCESS_KEY, ACCESS_SECRET);
+  device.connectSecure(wifiClient, LOSANT_ACCESS_KEY, LOSANT_ACCESS_SECRET);
 
   while(!device.connected()) {
     delay(500);
@@ -83,20 +83,20 @@ void connect() {
 
 void setup() {
   Serial.begin(115200);
-  
+
   // Giving it a little time because the serial monitor doesn't
   // immediately attach. Want the workshop that's running to
   // appear on each upload.
   delay(2000);
-  
+
   Serial.println();
   Serial.println("Running Workshop 2 Firmware.");
-  
+
   pinMode(BUTTON_PIN, INPUT);
   pinMode(LED_PIN, OUTPUT);
 
   // Register the command handler to be called when a command is received
-  // from the Structure platform.
+  // from the Losant platform.
   device.onCommand(&handleCommand);
 
   connect();
@@ -105,13 +105,13 @@ void setup() {
 void buttonPressed() {
   Serial.println("Button Pressed!");
 
-  // Structure uses a JSON protocol. Construct the simple state object.
+  // Losant uses a JSON protocol. Construct the simple state object.
   // { "button" : true }
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   root["button"] = true;
 
-  // Send the state to Structure.
+  // Send the state to Losant.
   device.sendState(root);
 }
 
@@ -127,7 +127,7 @@ void loop() {
   }
 
   if(!device.connected()) {
-    Serial.println("Disconnected from Structure");
+    Serial.println("Disconnected from Losant");
     Serial.println(device.mqttClient.state());
     toReconnect = true;
   }
