@@ -68,9 +68,16 @@ void connect() {
 
   device.connectSecure(wifiClient, LOSANT_ACCESS_KEY, LOSANT_ACCESS_SECRET);
 
+  unsigned long connectionStart = millis();
   while(!device.connected()) {
     delay(500);
     Serial.print(".");
+
+    // If we can't connect after 5 seconds, restart the board.
+    if(millis() - connectionStart > 5000) {
+      Serial.println("Failed to connect to Losant, restarting board.");
+      ESP.restart();
+    }
   }
 
   Serial.println("Connected!");
