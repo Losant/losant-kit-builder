@@ -24,7 +24,7 @@ const int LED_PIN = 12;
 
 bool ledState = false;
 
-// For an unsecure connection to Losant.
+// For a secure connection to Losant.
 WiFiClientSecure wifiClient;
 
 LosantDevice device(LOSANT_DEVICE_ID);
