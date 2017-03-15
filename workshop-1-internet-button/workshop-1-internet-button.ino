@@ -34,7 +34,11 @@ void connect() {
   Serial.print("Connecting to ");
   Serial.println(WIFI_SSID);
 
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  // WiFi fix: https://github.com/esp8266/Arduino/issues/2186
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_OFF);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(configWifiSSID.c_str(), configWifiPass.c_str());
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
