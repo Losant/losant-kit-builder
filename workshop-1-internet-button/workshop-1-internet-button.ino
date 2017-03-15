@@ -38,7 +38,7 @@ void connect() {
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
   WiFi.mode(WIFI_STA);
-  WiFi.begin(configWifiSSID.c_str(), configWifiPass.c_str());
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
